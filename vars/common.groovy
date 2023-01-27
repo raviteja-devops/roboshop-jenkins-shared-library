@@ -8,4 +8,8 @@ def compile() {
     sh 'mvn package'
   }
 
+  if (app_lang == "golang") {
+    sh 'go mod ; go get ; go build'
+  }
+
 }
