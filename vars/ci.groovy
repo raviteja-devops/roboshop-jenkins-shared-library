@@ -33,6 +33,7 @@ def call() {
             sh "sonar-scanner -Dsonar.host.url=http://mysonarprivateip:9000 -Dsonar.login=${SONAR_USER} -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=cart"
           }
         }
+        // sed searches for double quotes and remove them
 
         stage('upload code to a centralized place') {
           steps {
