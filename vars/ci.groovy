@@ -34,6 +34,7 @@ def call() {
           }
         }
         // sed searches for double quotes and remove them
+        // since aws parameter plugin in jenkins is not working, we are using shell (environment)
 
         stage('upload code to a centralized place') {
           steps {
