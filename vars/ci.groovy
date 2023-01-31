@@ -3,7 +3,7 @@ def call() {
     node('work-station') {
 
       stage('Cleanup WorkStation') {
-        cleanws()
+        cleanWs()
       }
 
       stage('CheckOut') {
