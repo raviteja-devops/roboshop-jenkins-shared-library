@@ -30,9 +30,10 @@ def call() {
             SONAR_PASS = '$(aws ssm get-parameters --region us-east-1 --names sonarqube.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\')'
           }
           steps {
-            maskPasswords(varPasswordPairs: [[password: 'admin123', var: 'sonarqube.pass']]) {
-              sh "sonar-scanner -Dsonar.host.url=http://172.31.15.116:9000 -Dsonar.login=${SONAR_USER} -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=${component}"
-
+            script {
+              maskPasswords(varPasswordPairs: [[password: 'admin123', var: 'sonarqube.pass']]) {
+                sh "sonar-scanner -Dsonar.host.url=http://172.31.15.116:9000 -Dsonar.login=${SONAR_USER} -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=${component}"
+              }
             }
           }
         }
