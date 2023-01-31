@@ -9,6 +9,7 @@ def compile() {
   }
 
   if (app_lang == "golang") {
+    sh 'rm -rf go.mod'
     sh 'go mod init dispatch ; go get ; go build'
   }
 
