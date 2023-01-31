@@ -51,3 +51,4 @@ def call() {
   }
 }
 
+// TRY and CATCH if any exception, anywhere in the entire pipeline, it will mail Failed message and links
