@@ -9,6 +9,7 @@ def call() {
       stage('CheckOut') {
         git branch: 'main', url: "https://github.com/raviteja-devops/${component}.git"
       }
+      // double quotes to access variables
 
       stage('Compile/Build') {
         common.compile()
