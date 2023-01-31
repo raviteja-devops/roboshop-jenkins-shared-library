@@ -1,58 +1,40 @@
 def call() {
   try {
+    node('work-station') {
 
-    pipeline {
-      agent {
-        label 'work-station'
+      stage('Cleanup WorkStation') {
+        cleanws()
       }
 
-      stages {
+      stage('CheckOut') {
+        git branch: 'main', url: "https://github.com/raviteja-devops/${component}.git"
+      }
 
-        stage('Compile/Build') {
-          steps {
-            script {
-              common.compile()
-            }
-          }
+      stage('Compile/Build') {
+        common.compile()
+      }
+
+      stage('UnitTests') {
+        common.unittests()
+      }
+
+      stage('Quality Control') {
+        SONAR_PASS = sh ( script: 'aws ssm get-parameters --region us-east-1 --names sonarqube.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+        SONAR_USER = sh ( script: 'aws ssm get-parameters --region us-east-1 --names sonarqube.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+        wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${SONAR_PASS}", var: 'SECRET']]]) {
+          sh "sonar-scanner -Dsonar.host.url=http://172.31.15.116:9000 -Dsonar.login=${SONAR_USER} -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=${component}"
         }
+      }
 
-        stage('Unit Tests') {
-          steps {
-            script {
-              common.unittests()
-            }
-          }
-        }
-
-        stage('Quality Control') {
-          environment {
-            SONAR_USER = '$(aws ssm get-parameters --region us-east-1 --names sonarqube.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\')'
-            SONAR_PASS = '$(aws ssm get-parameters --region us-east-1 --names sonarqube.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\')'
-          }
-          steps {
-            script {
-              maskPasswords(varPasswordPairs: [[password: "${SONAR_PASS}", var: 'sonarqube.pass']]) {
-                sh "sonar-scanner -Dsonar.host.url=http://172.31.15.116:9000 -Dsonar.login=${SONAR_USER} -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=${component}"
-              }
-            }
-          }
-        }
-        // sed searches for double quotes and remove them
-        // since aws parameter plugin in jenkins is not working, we are using shell (environment)
-
-        stage('upload code to a centralized place') {
-          steps {
-            echo 'compile'
-          }
-        }
-
+      stage('Upload Code To Centralized Place') {
+        echo 'Upload Done'
       }
 
     }
-
   } catch(Exception e) {
     common.email("Failed")
   }
 }
+
 
 // TRY and CATCH if any exception, anywhere in the entire pipeline, it will mail Failed message and links
