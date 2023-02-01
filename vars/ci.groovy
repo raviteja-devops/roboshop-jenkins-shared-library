@@ -14,6 +14,7 @@ def call() {
 
       stage('CheckOut') {
         git branch: 'main', url: "https://github.com/raviteja-devops/${component}.git"
+        sh 'env'
       }
       // double quotes to access variables
 
