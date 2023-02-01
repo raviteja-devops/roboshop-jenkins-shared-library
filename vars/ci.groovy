@@ -5,6 +5,12 @@ def call() {
   }
   // if SONAR_EXTRA_OPTS is not defined, declare that variable with SONAR_EXTRA_OPTS = " "
 
+  if(!env.TAG_NAME) {
+    env.PUSH_CODE = "false"
+  } else {
+    env.PUSH_CODE = "true"
+  }
+
   try {
     node('work-station') {
 
@@ -14,7 +20,6 @@ def call() {
 
       stage('CheckOut') {
         git branch: 'main', url: "https://github.com/raviteja-devops/${component}.git"
-        sh 'env'
       }
       // double quotes to access variables
 
@@ -36,8 +41,10 @@ def call() {
       }
       // result of sonar scan will remain same since there is no changes in code, so to save time we comment the line sh
 
-      stage('Upload Code To Centralized Place') {
-        echo 'Upload Done'
+      if(env.PUSH_CODE == 'true') {
+        stage('Upload Code To Centralized Place') {
+          echo 'Upload Done'
+        }
       }
 
     }
