@@ -3,6 +3,7 @@ def call() {
   if(!env.SONAR_EXTRA_OPTS) {
     env.SONAR_EXTRA_OPTS = " "
   }
+  // if SONAR_EXTRA_OPTS is not defined, declare that variable with SONAR_EXTRA_OPTS = " "
 
   try {
     node('work-station') {
