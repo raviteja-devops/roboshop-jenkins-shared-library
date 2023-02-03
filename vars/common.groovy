@@ -45,3 +45,14 @@ def unittests() {
 def email(email_note) {
   mail bcc: '', body: "Job Failed - ${JOB_BASE_NAME}\nJenkins URL - ${JOB_URL}", cc: '', from: 'ravitejatfcdemo@gmail.com', replyTo: '', subject: "Jenkins Job Failed - ${JOB_BASE_NAME}", to: 'ravitejatfcdemo@gmail.com'
 }
+
+def artifactPush() {
+  if (app_lang == "nodejs") {
+    zip -r cart-${TAG_NAME}.zip node_modules server.js
+  }
+  sh 'ls -l'
+}
+// we need to compile code but NodeJS is scripting language, no compile is required but add dependencies
+// 'npm install' is going to bring one folder- node_modules, has all dependencies for code to run 'server.js'
+// these both are enough on server side to run the things
+// we are making package of both 'node_modules' and 'server.js' files in zip file
