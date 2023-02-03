@@ -49,7 +49,7 @@ def email(email_note) {
 def artifactPush() {
   sh "echo ${TAG_NAME} >VERSION"
   if (app_lang == "nodejs") {
-    sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION"
+    sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION ${extraFiles}"
   }
   sh 'ls -l'
   NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
@@ -64,3 +64,5 @@ def artifactPush() {
 // these both are enough on server side to run the things
 // we are making package of both 'node_modules' and 'server.js' files in zip file
 // redirecting TAG_NAME to file called VERSION and storing that version in zip file for future references
+
+// catalogue and user component has extra directory called schema

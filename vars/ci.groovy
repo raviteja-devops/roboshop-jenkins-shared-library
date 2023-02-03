@@ -5,6 +5,10 @@ def call() {
   }
   // if SONAR_EXTRA_OPTS is not defined, declare that variable with SONAR_EXTRA_OPTS = " "
 
+  if(!env.extraFiles) {
+    env.extraFiles = " "
+  }
+
   if(!env.TAG_NAME) {
     env.PUSH_CODE = "false"
   } else {
