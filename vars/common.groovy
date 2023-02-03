@@ -5,7 +5,7 @@ def compile() {
   }
 
   if (app_lang == "maven") {
-    sh "mvn package && cp target/{component}-1.0.jar ${component}.jar"
+    sh "mvn package && cp target/${component}-1.0.jar ${component}.jar"
   }
   // double quotes when using variables
   // mvn package command, compile and built 1.0.jar file in default target location
