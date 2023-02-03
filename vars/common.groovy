@@ -65,4 +65,4 @@ def artifactPush() {
 // we are making package of both 'node_modules' and 'server.js' files in zip file
 // redirecting TAG_NAME to file called VERSION and storing that version in zip file for future references
 
-// catalogue and user component has extra directory called schema
+// catalogue and user component has extra directory called schema ${extraFiles}
