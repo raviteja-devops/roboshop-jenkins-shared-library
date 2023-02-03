@@ -45,7 +45,7 @@ def call() {
       }
       // result of sonar scan will remain same since there is no changes in code, so to save time we comment the line sh
 
-      if(env.PUSH_CODE == 'true') {
+      if(env.PUSH_CODE == "true") {
         stage('Upload Code To Centralized Place') {
           common.artifactPush()
         }
