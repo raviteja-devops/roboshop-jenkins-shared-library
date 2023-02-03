@@ -55,7 +55,7 @@ def artifactPush() {
     sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION ${extraFiles}"
   }
 
-  if (app_lang == "nginx" || app_lang == "python") {
+  if (app_lang == "nginx" || app_lang == "python" || app_lang == "golang" ) {
     sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile ${extraFiles}"
   }
 // in nginx we take all the files except Jenkinsfile into zip folder
