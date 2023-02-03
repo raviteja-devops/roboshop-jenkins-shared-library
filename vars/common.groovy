@@ -5,8 +5,10 @@ def compile() {
   }
 
   if (app_lang == "maven") {
-    sh 'mvn package'
+    sh "mvn package && cp target/{component}-1.0.jar ${component}.jar"
   }
+  // double quotes when using variables
+  // mvn package command, compile and built 1.0.jar file in default target location
 
   if (app_lang == "golang") {
     sh 'rm -rf go.mod'
@@ -54,9 +56,13 @@ def artifactPush() {
   }
 
   if (app_lang == "nginx" || app_lang == "python") {
-    sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile"
+    sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile ${extraFiles}"
   }
 // in nginx we take all the files except Jenkinsfile into zip folder
+
+  if (app_lang == "maven") {
+    sh "zip -r ${component}-${TAG_NAME}.zip * ${component}.jar VERSION ${extraFiles}"
+  }
 
   NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
   NEXUS_USER = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
