@@ -47,8 +47,9 @@ def email(email_note) {
 }
 
 def artifactPush() {
+  sh "echo ${TAG_NAME} >VERSION"
   if (app_lang == "nodejs") {
-    sh "zip -r cart-${TAG_NAME}.zip node_modules server.js"
+    sh "zip -r cart-${TAG_NAME}.zip node_modules server.js VERSION"
   }
   sh 'ls -l'
 }
@@ -56,3 +57,4 @@ def artifactPush() {
 // 'npm install' is going to bring one folder- node_modules, has all dependencies for code to run 'server.js'
 // these both are enough on server side to run the things
 // we are making package of both 'node_modules' and 'server.js' files in zip file
+// redirecting TAG_NAME to file called VERSION and storing that version in zip file for future references
