@@ -45,6 +45,12 @@ def call() {
       }
       // result of sonar scan will remain same since there is no changes in code, so to save time we comment the line sh
 
+      if(app_lang == "maven") {
+        stage('Build Package') {
+          sh "mvn package && cp target/${component}-1.0.jar ${component}.jar"
+        }
+      }
+
       if(env.PUSH_CODE == "true") {
         stage('Upload Code To Centralized Place') {
           common.artifactPush()

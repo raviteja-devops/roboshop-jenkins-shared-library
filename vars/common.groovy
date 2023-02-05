@@ -5,10 +5,13 @@ def compile() {
   }
 
   if (app_lang == "maven") {
-    sh "mvn package && cp target/${component}-1.0.jar ${component}.jar"
+    sh 'mvn clean compile'
   }
   // double quotes when using variables
   // mvn package command, compile and built 1.0.jar file in default target location
+  // mvn package command, It does the job of compiling, verifying and building the project.
+  // we are using this because we are good with unittests and quality control
+  // now we divide the compile and build part, packaging will take time, so we same some time
 
   if (app_lang == "golang") {
     sh 'rm -rf go.mod'
