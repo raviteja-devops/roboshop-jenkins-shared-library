@@ -54,28 +54,32 @@ def email(email_note) {
 }
 
 def artifactPush() {
-  sh "echo ${TAG_NAME} >VERSION"
-
-  if (app_lang == "nodejs") {
-    sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION ${extraFiles}"
-  }
-
-  if (app_lang == "nginx" || app_lang == "python" || app_lang == "golang") {
-    sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile ${extraFiles}"
-  }
-// in nginx we take all the files except Jenkinsfile into zip folder
-
-  if (app_lang == "maven") {
-    sh "zip -r ${component}-${TAG_NAME}.zip * ${component}.jar VERSION ${extraFiles}"
-  }
-
-  NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
-  NEXUS_USER = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
-  wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${NEXUS_PASS}", var: 'SECRET']]]) {
-    sh "curl -v -u ${NEXUS_USER}:${NEXUS_PASS} --upload-file ${component}-${TAG_NAME}.zip http://172.31.3.231:8081/repository/${component}/${component}-${TAG_NAME}.zip"
-  }
+  sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 633788536644.dkr.ecr.us-east-1.amazonaws.com"
+  sh "docker push 633788536644.dkr.ecr.us-east-1.amazonaws.com/${component}:${TAG_NAME}"
+//  sh "echo ${TAG_NAME} >VERSION"
+//
+//  if (app_lang == "nodejs") {
+//    sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION ${extraFiles}"
+//  }
+//
+//  if (app_lang == "nginx" || app_lang == "python" || app_lang == "golang") {
+//    sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile ${extraFiles}"
+//  }
+//// in nginx we take all the files except Jenkinsfile into zip folder
+//
+//  if (app_lang == "maven") {
+//    sh "zip -r ${component}-${TAG_NAME}.zip * ${component}.jar VERSION ${extraFiles}"
+//  }
+//
+//  NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+//  NEXUS_USER = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+//  wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${NEXUS_PASS}", var: 'SECRET']]]) {
+//    sh "curl -v -u ${NEXUS_USER}:${NEXUS_PASS} --upload-file ${component}-${TAG_NAME}.zip http://172.31.3.231:8081/repository/${component}/${component}-${TAG_NAME}.zip"
+//  }
 
 }
+
+
 // we need to compile code but NodeJS is scripting language, no compile is required but add dependencies
 // 'npm install' is going to bring one folder- node_modules, has all dependencies for code to run 'server.js'
 // these both are enough on server side to run the things
