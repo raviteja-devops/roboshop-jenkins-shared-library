@@ -18,6 +18,8 @@ def compile() {
     sh 'go mod init dispatch ; go get ; go build'
   }
 
+    sh "docker build -t 633788536644.dkr.ecr.us-east-1.amazonaws.com/${component}:${TAG_NAME} . "
+
 }
 
 
